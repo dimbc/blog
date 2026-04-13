@@ -1,6 +1,6 @@
-<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Astro Blog" href="https://dimbc.github.io/rss.xml"><meta name="generator" content="Astro v6.1.5"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/blog/_astro/fonts/e9fbdac9f7a3ca2e.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/blog/_astro/fonts/c04724ba2dce0e1e.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/blog/_astro/fonts/e9fbdac9f7a3ca2e.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/blog/_astro/fonts/c04724ba2dce0e1e.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://dimbc.github.io/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><!-- Primary Meta Tags --><title>OpenSSL简单使用</title><meta name="title" content="OpenSSL简单使用"><meta name="description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://dimbc.github.io/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><meta property="og:title" content="OpenSSL简单使用"><meta property="og:description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><meta property="og:image" content="https://dimbc.github.io/blog/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://dimbc.github.io/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><meta property="twitter:title" content="OpenSSL简单使用"><meta property="twitter:description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><meta property="twitter:image" content="https://dimbc.github.io/blog/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><script type="module">document.addEventListener("DOMContentLoaded",function(){const n=document.createElement("div");n.id="cursor-bg",document.body.appendChild(n),document.addEventListener("mousemove",function(e){const t=e.clientX/window.innerWidth*100,o=e.clientY/window.innerHeight*100;n.style.setProperty("--x",`${t}%`),n.style.setProperty("--y",`${o}%`)}),document.querySelectorAll("pre").forEach(function(e){const t=document.createElement("button");t.className="copy-btn",t.textContent="复制",t.addEventListener("click",function(){const o=e.querySelector("code"),c=o?o.textContent:e.textContent;navigator.clipboard.writeText(c).then(function(){t.textContent="已复制",t.classList.add("copied"),setTimeout(function(){t.textContent="复制",t.classList.remove("copied")},2e3)})}),e.appendChild(t)})});</script><link rel="stylesheet" href="/blog/_astro/Header.CcLJzYc4.css">
-<style>.comments-container[data-astro-cid-jvxsf75u]{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}.comments-title[data-astro-cid-jvxsf75u]{font-size:1.25rem;font-weight:600;margin-bottom:1.5rem;color:var(--text-primary)}main[data-astro-cid-bvzihdzo]{width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%;margin:2em 0}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--shadow-md);max-width:900px}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:0;color:var(--text-secondary)}.title[data-astro-cid-bvzihdzo]{margin-bottom:2em;padding:1em 0;text-align:center;line-height:1.2}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:.5em 0 1em;font-size:2.5rem}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:var(--text-muted);font-size:.9rem}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:normal;font-size:.85rem;margin-top:.25em}.title[data-astro-cid-bvzihdzo] hr[data-astro-cid-bvzihdzo]{margin:1.5em auto;width:60px;border-top:2px solid var(--accent)}@media(max-width:720px){.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{font-size:2rem}.hero-image[data-astro-cid-bvzihdzo]{margin:1em 0}}
-</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h1 data-astro-cid-3ef6ksr2><a href="/blog/" data-astro-cid-3ef6ksr2>Astro Blog</a></h1> <div class="nav-links" data-astro-cid-3ef6ksr2> <a href="/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/blog/blog" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/blog/about" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="light-icon" data-astro-cid-3ef6ksr2> <circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle> <line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line> <line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line> <line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line> <line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line> </svg> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark-icon" data-astro-cid-3ef6ksr2> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path> </svg> </button> </div> </nav> </header>  <script type="module">const a=document.getElementById("theme-toggle"),e=document.documentElement,t=localStorage.getItem("theme"),s=window.matchMedia("(prefers-color-scheme: dark)").matches;(t==="dark"||!t&&s)&&e.classList.add("dark");a.addEventListener("click",()=>{e.classList.toggle("dark"),localStorage.setItem("theme",e.classList.contains("dark")?"dark":"light")});</script> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo>  <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-04-13T00:00:00.000Z"> Apr 13, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>OpenSSL简单使用</h1> <hr data-astro-cid-bvzihdzo> </div>  <h1>网络空间安全设计与实践课程实验报告</h1>
+<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Astro Blog" href="https://dimbc.github.io/rss.xml"><meta name="generator" content="Astro v6.1.5"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/blog/_astro/fonts/e9fbdac9f7a3ca2e.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/blog/_astro/fonts/c04724ba2dce0e1e.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/blog/_astro/fonts/e9fbdac9f7a3ca2e.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/blog/_astro/fonts/c04724ba2dce0e1e.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://dimbc.github.io/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><!-- Primary Meta Tags --><title>OpenSSL简单使用</title><meta name="title" content="OpenSSL简单使用"><meta name="description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://dimbc.github.io/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><meta property="og:title" content="OpenSSL简单使用"><meta property="og:description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><meta property="og:image" content="https://dimbc.github.io/blog/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://dimbc.github.io/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><meta property="twitter:title" content="OpenSSL简单使用"><meta property="twitter:description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><meta property="twitter:image" content="https://dimbc.github.io/blog/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><script type="module">document.addEventListener("DOMContentLoaded",function(){const n=document.createElement("div");n.id="cursor-bg",document.body.appendChild(n),document.addEventListener("mousemove",function(e){const t=e.clientX/window.innerWidth*100,o=e.clientY/window.innerHeight*100;n.style.setProperty("--x",`${t}%`),n.style.setProperty("--y",`${o}%`)}),document.querySelectorAll("pre").forEach(function(e){const t=document.createElement("button");t.className="copy-btn",t.textContent="复制",t.addEventListener("click",function(){const o=e.querySelector("code"),c=o?o.textContent:e.textContent;navigator.clipboard.writeText(c).then(function(){t.textContent="已复制",t.classList.add("copied"),setTimeout(function(){t.textContent="复制",t.classList.remove("copied")},2e3)})}),e.appendChild(t)})});</script><link rel="stylesheet" href="/blog/_astro/Header.CGZaeeOu.css">
+<style>.comments-container[data-astro-cid-jvxsf75u]{padding-top:.5rem}.comments-title[data-astro-cid-jvxsf75u]{font-size:1.25rem;font-weight:600;margin-bottom:1.5rem;color:var(--text-primary)}main[data-astro-cid-bvzihdzo]{width:780px;max-width:calc(100% - 2em);margin:2em auto;padding:0;background:none;border-radius:0;box-shadow:none;overflow:visible}main[data-astro-cid-bvzihdzo]:before{display:none}main[data-astro-cid-bvzihdzo]:hover{transform:none;box-shadow:none}.hero-image[data-astro-cid-bvzihdzo]{width:100%;margin:0 0 1.5em}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:16px;box-shadow:var(--shadow-md);max-width:900px}.article-container[data-astro-cid-bvzihdzo]{display:flex;flex-direction:column;gap:1.5rem}.title-card[data-astro-cid-bvzihdzo]{text-align:center}.title-card[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:.5em 0 .8em;font-size:2.2rem}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:var(--text-muted);font-size:.9rem}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:normal;font-size:.85rem;margin-top:.25em}.title-divider[data-astro-cid-bvzihdzo]{width:60px;height:3px;border:none;background:linear-gradient(90deg,var(--accent),#8b5cf6);margin:1em auto;border-radius:2px}.body-card[data-astro-cid-bvzihdzo]{color:var(--text-secondary)}.body-card[data-astro-cid-bvzihdzo] h1{font-size:2rem}.body-card[data-astro-cid-bvzihdzo] h2{font-size:1.6rem}.body-card[data-astro-cid-bvzihdzo] h3{font-size:1.3rem}@media(max-width:720px){main[data-astro-cid-bvzihdzo]{width:100%}.title-card[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{font-size:1.8rem}.gradient-card-inner[data-astro-cid-bvzihdzo]{padding:1.2rem 1.4rem}}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h1 data-astro-cid-3ef6ksr2><a href="/blog/" data-astro-cid-3ef6ksr2>Astro Blog</a></h1> <div class="nav-links" data-astro-cid-3ef6ksr2> <a href="/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/blog/blog" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/blog/about" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="light-icon" data-astro-cid-3ef6ksr2> <circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle> <line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line> <line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line> <line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line> <line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line> </svg> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark-icon" data-astro-cid-3ef6ksr2> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path> </svg> </button> </div> </nav> </header>  <script type="module">const a=document.getElementById("theme-toggle"),e=document.documentElement,t=localStorage.getItem("theme"),s=window.matchMedia("(prefers-color-scheme: dark)").matches;(t==="dark"||!t&&s)&&e.classList.add("dark");a.addEventListener("click",()=>{e.classList.toggle("dark"),localStorage.setItem("theme",e.classList.contains("dark")?"dark":"light")});</script> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo>  <div class="article-container" data-astro-cid-bvzihdzo> <div class="gradient-card" data-astro-cid-bvzihdzo> <div class="gradient-card-inner title-card" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-04-13T00:00:00.000Z"> Apr 13, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>OpenSSL简单使用</h1> <hr class="title-divider" data-astro-cid-bvzihdzo> </div> </div> <div class="gradient-card" data-astro-cid-bvzihdzo> <div class="gradient-card-inner body-card" data-astro-cid-bvzihdzo>  <h1>网络空间安全设计与实践课程实验报告</h1>
 <h2>一.  实验目的和要求</h2>
 <p>学习OpenSSL生成密钥、生成数字证书的基本使用方法口使用OpenSSL生成根CA密钥和自签根CA证书</p>
 <p>使用OpenSSL为某域名生成TLS密钥和并使用自签根CA签发证书</p>
@@ -258,15 +258,15 @@ http://tls.practice2025.learncybersecurity.cn/
 <pre><code>openssl x509 -req -in server-csr.pem -CA ca-cert.pem -CAkey ca-key.pem -out server-cert.pem -days 365 -sha256 -extfile x509v3.ext
 </code></pre>
 <pre><code>关注命令⾏选项与参数：
-<p>x509：证书显⽰和签名命令</p>
-<p>-req：将使⽤已⾃签的CSR（PKCS#10格式）作为输⼊</p>
-<p>-CA ca-cert.pem：从指定⽂件ca-cert.pem读取CA证书</p>
-<p>-CAkey ca-key.pem：从指定⽂件ca-key.pem读取CA密钥以签发证书</p>
-<p>-out server-cert.pem：输出证书⾄指定⽂件server-cert.pem</p>
-<p>-extfile x509v3.ext：从指定⽂件x509v3.ext读取数字证书第3版扩展信息</p>
-<p>-sha256：对证书签名时使⽤SHA-256哈希算法</p>
-</code><p><code>-days 365：证书有效期设置为365天
-</code></p></pre><p></p>
+x509：证书显⽰和签名命令
+-req：将使⽤已⾃签的CSR（PKCS#10格式）作为输⼊
+-CA ca-cert.pem：从指定⽂件ca-cert.pem读取CA证书
+-CAkey ca-key.pem：从指定⽂件ca-key.pem读取CA密钥以签发证书
+-out server-cert.pem：输出证书⾄指定⽂件server-cert.pem
+-extfile x509v3.ext：从指定⽂件x509v3.ext读取数字证书第3版扩展信息
+-sha256：对证书签名时使⽤SHA-256哈希算法
+-days 365：证书有效期设置为365天
+</code></pre>
 <p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-200128.png" alt=""></p>
 <p>5. 执⾏以下命令可查看上⼀步由⾃签根CA签发的⼀本服务器TLS证书的信息：</p>
 <pre><code>openssl x509 -in server-cert.pem -noout -text
@@ -278,30 +278,30 @@ http://tls.practice2025.learncybersecurity.cn/
 <p>2. 编辑NGINX配置⽂件C:\nginx\conf\nginx.conf，找到http块，在其中添加⼀个server块，该⽂件组</p>
 <p>织形式如下：</p>
 <pre><code>...（http块外其它内容）
-<p>http {</p>
-<p>…（http块内其它内容）</p>
-<p>server { &#x26;lt;-添加的块从此⾏开始-&#x26;gt;</p>
-<p>…（server块内内容）</p>
-<p>} &#x26;lt;-添加的块到此⾏结束-&#x26;gt;</p>
-<p>…（http块内其它内容）</p>
-<p>}</p>
+http {
+...（http块内其它内容）
+server { \&#x3C;-添加的块从此⾏开始-\>
+...（server块内内容）
+} \&#x3C;-添加的块到此⾏结束-\>
+...（http块内其它内容）
+}
 <p>注意：在http块中新添加的server块不要落在其它server块或其它配置块内</p>
 <p>添加的server块完整内容为：</p>
-<p>lecture-note-10-ssl-tls-encryption.md</p>
-<p>2025-05-12</p>
-<p>7 / 14server {</p>
-<p>listen 443 ssl;</p>
-<p>server_name myweb.test;</p>
-<p>ssl_certificate C:\cert\server-cert.pem;</p>
-<p>ssl_certificate_key C:\cert\server-key.pem;</p>
-<p>ssl_session_cache shared:SSL:1m;</p>
-<p>ssl_session_timeout 5m;</p>
-<p>ssl_ciphers HIGH:!aNULL:!MD5;</p>
-<p>ssl_prefer_server_ciphers on;</p>
-<p>location / {</p>
-<p>root html;</p>
-<p>index index.html index.htm;</p>
-<p>}</p>
+<p>lecture-note-10-ssl-tls-encryption.md
+2025-05-12
+7 / 14server {
+listen 443 ssl;
+server_name myweb.test;
+ssl_certificate C:\cert\server-cert.pem;
+ssl_certificate_key C:\cert\server-key.pem;
+ssl_session_cache shared:SSL:1m;
+ssl_session_timeout 5m;
+ssl_ciphers HIGH:!aNULL:!MD5;
+ssl_prefer_server_ciphers on;
+location / {
+root html;
+index index.html index.htm;
+}</p>
 </code><p><code>}
 </code></p></pre><p></p>
 <p>3. 保存⽂件后检查配置⽂件语法，在命令提⽰符中于C:\nginx⽬录下执⾏nginx –t，如有错误需更正配</p>
@@ -385,18 +385,18 @@ http://tls.practice2025.learncybersecurity.cn/
 <h5>3. Nginx 部署 HTTPS 站点​​</h5>
 <p>Nginx 配置核心片段​​：</p>
 <pre><code>nginx
-<p>server {</p>
-<p>listen 443 ssl;</p>
-<p>server_name myweb.test;</p>
-<p>ssl_certificate C:\cert\server-cert.pem; # 证书路径（Windows 需双反斜杠）</p>
-<p>ssl_certificate_key C:\cert\server-key.pem;</p>
-<p>ssl_session_cache shared:SSL:1m;</p>
-<p>ssl_session_timeout 5m;</p>
-<p>ssl_ciphers HIGH:!aNULL:!MD5;</p>
-<p>ssl_prefer_server_ciphers on;</p>
-<p>location / {</p>
-<p>root html;</p>
-<p>index index.html index.htm;</p>
+server {
+listen 443 ssl;
+server_name myweb.test;
+ssl_certificate C:\\cert\\server-cert.pem; \# 证书路径（Windows 需双反斜杠）
+ssl_certificate_key C:\\cert\\server-key.pem;
+ssl_session_cache shared:SSL:1m;
+ssl_session_timeout 5m;
+ssl_ciphers HIGH:!aNULL:!MD5;
+ssl_prefer_server_ciphers on;
+location / {
+root html;
+index index.html index.htm;
 <p>}</p>
 </code><p><code>}
 </code></p></pre><p></p>
@@ -509,4 +509,4 @@ http://tls.practice2025.learncybersecurity.cn/
 <p>5. 使⽤CURL可通过选项--cacert并提供CA证书路径作为参数在访问中信任CA签发的证书：</p>
 <p>curl --cacert ca-cert.pem https://...</p>
 <p>实验内容（⼋）：学习OpenSSL多种⽤途</p>
-<p>实验内容（九）：尝试使⽤免费证书颁发机构提供的服务获取⼀本可⽤于真实⽹站的证书</p>  <div class="comments-container" data-astro-cid-jvxsf75u> <h3 class="comments-title" data-astro-cid-jvxsf75u>评论</h3> <div id="utterances-comments" data-astro-cid-jvxsf75u></div> <script type="module">(function(){const n=()=>typeof window<"u"&&document.documentElement.classList.contains("dark")?"github-dark":"github-light",r=s=>{const t=document.createElement("script");t.src="https://utteranc.es/client.js",t.async=!0,t.crossOrigin="anonymous",t.setAttribute("repo","dimbc/blog"),t.setAttribute("issue-term","pathname"),t.setAttribute("theme",s);const e=document.getElementById("utterances-comments");e.innerHTML="",e.appendChild(t)};r(n()),typeof window<"u"&&new MutationObserver(t=>{t.forEach(e=>{e.attributeName==="class"&&r(n())})}).observe(document.documentElement,{attributes:!0})})();</script> </div> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <div class="footer-content" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>&copy; 2026 Your name here. All rights reserved.</p> <p class="footer-links" data-astro-cid-sz7xmlte> <a href="/blog/" data-astro-cid-sz7xmlte>Home</a> <a href="/blog/blog" data-astro-cid-sz7xmlte>Blog</a> <a href="/blog/about" data-astro-cid-sz7xmlte>About</a> </p> </div> </footer> </body></html>
+<p>实验内容（九）：尝试使⽤免费证书颁发机构提供的服务获取⼀本可⽤于真实⽹站的证书</p>  </div> </div> <div class="gradient-card" data-astro-cid-bvzihdzo> <div class="gradient-card-inner" data-astro-cid-bvzihdzo> <div class="comments-container" data-astro-cid-jvxsf75u> <h3 class="comments-title" data-astro-cid-jvxsf75u>💬 评论</h3> <div id="utterances-comments" data-astro-cid-jvxsf75u></div> <script type="module">(function(){const n=()=>typeof window<"u"&&document.documentElement.classList.contains("dark")?"github-dark":"github-light",r=s=>{const t=document.createElement("script");t.src="https://utteranc.es/client.js",t.async=!0,t.crossOrigin="anonymous",t.setAttribute("repo","dimbc/blog"),t.setAttribute("issue-term","pathname"),t.setAttribute("theme",s);const e=document.getElementById("utterances-comments");e.innerHTML="",e.appendChild(t)};r(n()),typeof window<"u"&&new MutationObserver(t=>{t.forEach(e=>{e.attributeName==="class"&&r(n())})}).observe(document.documentElement,{attributes:!0})})();</script> </div> </div> </div> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <div class="footer-content" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>&copy; 2026 Your name here. All rights reserved.</p> <p class="footer-links" data-astro-cid-sz7xmlte> <a href="/blog/" data-astro-cid-sz7xmlte>Home</a> <a href="/blog/blog" data-astro-cid-sz7xmlte>Blog</a> <a href="/blog/about" data-astro-cid-sz7xmlte>About</a> </p> </div> </footer> </body></html>
