@@ -1,0 +1,512 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Astro Blog" href="https://dimbc.github.io/rss.xml"><meta name="generator" content="Astro v6.1.5"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/blog/_astro/fonts/e9fbdac9f7a3ca2e.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/blog/_astro/fonts/c04724ba2dce0e1e.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/blog/_astro/fonts/e9fbdac9f7a3ca2e.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/blog/_astro/fonts/c04724ba2dce0e1e.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://dimbc.github.io/blog/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><!-- Primary Meta Tags --><title>OpenSSL简单使用</title><meta name="title" content="OpenSSL简单使用"><meta name="description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://dimbc.github.io/blog/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><meta property="og:title" content="OpenSSL简单使用"><meta property="og:description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><meta property="og:image" content="https://dimbc.github.io/blog/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://dimbc.github.io/blog/blog/openssl%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/"><meta property="twitter:title" content="OpenSSL简单使用"><meta property="twitter:description" content="网络空间安全设计与实践课程实验报告，学习OpenSSL生成密钥、生成数字证书的基本使用方法"><meta property="twitter:image" content="https://dimbc.github.io/blog/_astro/blog-placeholder-1.Bx0Zcyzv.jpg"><script type="module">document.addEventListener("DOMContentLoaded",function(){const e=document.createElement("div");e.id="cursor-bg",document.body.appendChild(e),document.addEventListener("mousemove",function(n){const t=n.clientX/window.innerWidth*100,o=n.clientY/window.innerHeight*100;e.style.setProperty("--x",`${t}%`),e.style.setProperty("--y",`${o}%`)})});</script><link rel="stylesheet" href="/blog/_astro/Header.CzlMsykx.css">
+<style>.comments-container[data-astro-cid-jvxsf75u]{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}.comments-title[data-astro-cid-jvxsf75u]{font-size:1.25rem;font-weight:600;margin-bottom:1.5rem;color:var(--text-primary)}main[data-astro-cid-bvzihdzo]{width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%;margin:2em 0}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--shadow-md);max-width:900px}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:0;color:var(--text-secondary)}.title[data-astro-cid-bvzihdzo]{margin-bottom:2em;padding:1em 0;text-align:center;line-height:1.2}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:.5em 0 1em;font-size:2.5rem}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:var(--text-muted);font-size:.9rem}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:normal;font-size:.85rem;margin-top:.25em}.title[data-astro-cid-bvzihdzo] hr[data-astro-cid-bvzihdzo]{margin:1.5em auto;width:60px;border-top:2px solid var(--accent)}@media(max-width:720px){.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{font-size:2rem}.hero-image[data-astro-cid-bvzihdzo]{margin:1em 0}}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h1 data-astro-cid-3ef6ksr2><a href="/blog/" data-astro-cid-3ef6ksr2>Astro Blog</a></h1> <div class="nav-links" data-astro-cid-3ef6ksr2> <a href="/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/blog/blog" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/blog/about" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" data-astro-cid-3ef6ksr2> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="light-icon" data-astro-cid-3ef6ksr2> <circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle> <line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line> <line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line> <line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line> <line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line> </svg> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark-icon" data-astro-cid-3ef6ksr2> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path> </svg> </button> </div> </nav> </header>  <script type="module">const a=document.getElementById("theme-toggle"),e=document.documentElement,t=localStorage.getItem("theme"),s=window.matchMedia("(prefers-color-scheme: dark)").matches;(t==="dark"||!t&&s)&&e.classList.add("dark");a.addEventListener("click",()=>{e.classList.toggle("dark"),localStorage.setItem("theme",e.classList.contains("dark")?"dark":"light")});</script> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo>  <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-04-13T00:00:00.000Z"> Apr 13, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>OpenSSL简单使用</h1> <hr data-astro-cid-bvzihdzo> </div>  <h1>网络空间安全设计与实践课程实验报告</h1>
+<h2>一.  实验目的和要求</h2>
+<p>学习OpenSSL生成密钥、生成数字证书的基本使用方法口使用OpenSSL生成根CA密钥和自签根CA证书</p>
+<p>使用OpenSSL为某域名生成TLS密钥和并使用自签根CA签发证书</p>
+<p>使用web服务器(例如NGINX)在本地部署一个可通过域名以HTTP方式访为该站点部署生成的证书，以HTTPS方式访问，查看浏览问的web站点后，器的访问提示</p>
+<p>在浏览器/操作系统中导入生成的自签根CA证书，查看浏览器访问配置的HTTPS网站的访问提示</p>
+<h2>二. 实验环境（软件、硬件、网络情况等）</h2>
+<h3><strong>硬件环境</strong></h3>
+<ul>
+<li><strong>宿主机配置：</strong>
+<ul>
+<li>处理器：i5-12450h 内存：16GB</li>
+<li>硬盘：1TB SSD</li>
+<li>内存：16GB</li>
+<li>网络环境：无线互联网连接</li>
+</ul>
+</li>
+<li><strong>客户机（虚拟机）配置：</strong>
+<ul>
+<li>Windows 10 专业版
+<ul>
+<li>CPU：2 核</li>
+<li>内存：2GB</li>
+<li>硬盘：60G</li>
+<li>网络：NAT模式</li>
+</ul>
+</li>
+<li>Debian 12.9
+<ul>
+<li>CPU：2 核</li>
+<li>内存：2GB</li>
+<li>硬盘：30GB</li>
+<li>网络：NAT模式</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3><strong>软件环境</strong></h3>
+<ul>
+<li>**宿主机操作系统：**Windows 11 专业版，64 位操作系统，基于x64 的处理器</li>
+<li><strong>虚拟机软件：</strong> VMware® Workstation 17 Pro 17.6.2 build-24409262</li>
+</ul>
+<h2>三.  实验原理</h2>
+<p>SSL/TLS 的核心原理是通过<strong>混合加密、身份认证和完整性校验</strong>实现安全通信，其关键机制如下：</p>
+<hr>
+<h3><strong>1. 混合加密（Hybrid Encryption）</strong></h3>
+<ul>
+<li><strong>非对称加密</strong>（如RSA、ECDHE）：
+用于安全交换对称密钥（密钥协商），解决密钥分发难题。
+例如：TLS 握手阶段通过 ​<strong>​ECDHE​</strong>​ 生成临时公私钥对，交换密钥信息。</li>
+<li><strong>对称加密</strong>（如AES-GCM、ChaCha20）：
+使用协商后的密钥加密实际数据，高效且安全。
+例如：加密HTTP请求内容，防止窃听。</li>
+</ul>
+<hr>
+<h3><strong>2. 身份认证（数字证书）</strong></h3>
+<ul>
+<li><strong>服务器证书</strong>：
+由受信任的 ​<strong>​CA（证书颁发机构）​</strong>​ 签发，包含服务器公钥、域名等信息。
+客户端验证证书有效性（有效期、域名匹配、CA信任链）。</li>
+<li><strong>客户端证书</strong>（可选）：
+双向认证场景中，客户端提供证书验证自身身份。</li>
+</ul>
+<hr>
+<h3><strong>3. 数据完整性</strong></h3>
+<ul>
+<li><strong>哈希算法</strong>（如SHA-256）：
+对通信数据生成摘要，确保传输过程中未被篡改。
+结合MAC（消息认证码）或AEAD（如AES-GCM）实现防篡改。</li>
+</ul>
+<hr>
+<h3><strong>4. TLS握手流程（核心步骤）</strong></h3>
+<ol>
+<li><strong>协商协议版本</strong>：客户端与服务器协商使用TLS 1.2/1.3。</li>
+<li><strong>密钥交换</strong>：通过非对称加密（如ECDHE）生成共享密钥。</li>
+<li><strong>身份验证</strong>：服务器提供证书，客户端验证CA签名。</li>
+<li><strong>生成会话密钥</strong>：基于交换的密钥派生出对称密钥，用于后续数据加密。</li>
+</ol>
+<p><strong>TLS 1.3优化</strong>：</p>
+<ul>
+<li>简化握手为 <strong>1-RTT</strong>（仅需1次往返），移除不安全算法（如RSA密钥交换）。</li>
+<li>默认启用前向保密（PFS），即使私钥泄露，历史会话也无法解密。</li>
+</ul>
+<hr>
+<h3><strong>5. 安全增强机制</strong></h3>
+<ul>
+<li><strong>前向保密（PFS）</strong>：每次会话生成独立密钥，防止长期密钥泄露导致历史数据被破解。</li>
+<li><strong>证书透明度（CT）</strong>：公开证书签发日志，防止恶意CA签发假证书。</li>
+<li><strong>防降级攻击</strong>：强制使用高版本协议（如禁用SSLv3），阻止攻击者强制降级到弱版本。</li>
+</ul>
+<hr>
+<h3><strong>核心价值</strong></h3>
+<ul>
+<li><strong>机密性</strong>：对称加密保护数据隐私。</li>
+<li><strong>真实性</strong>：数字证书验证通信双方身份。</li>
+<li><strong>完整性</strong>：哈希校验防止数据篡改。</li>
+</ul>
+<p>通过上述机制，SSL/TLS 在不可信的网络（如互联网）中建立了安全的通信通道，是HTTPS、电子邮件等应用的基础。</p>
+<h2><strong>四.实验准备</strong></h2>
+<h3>实验准备（⼀）：安装软件</h3>
+<p>1.在Windows虚拟机中安装所需软件安装Mozilla Firefox（建议“美式英语/en-US”）</p>
+<p>2.安装OpenSSL</p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-194407.png" alt=""></p>
+<p>3.在C盘下建⽴⼀个⽬录⽤于存放TLS证书和密钥，如C:\cert，并将分发压缩包中的x509v3.ext⽂件复制到该⽂件夹下</p>
+<p>4.解压NGINX到C:\nginx⽬录下使得：nginx.exe⽂件位于C:\nginx\nginx.exe，⽬录结构保持不变</p>
+<h3>实验准备（⼆）：Windows虚拟机中编辑hosts⽂件配置本地域名解析</h3>
+<ol>
+<li>
+<p>使⽤命令netstat -anp tcp查看并确认tcp80/tcp443端⼝未被占⽤
+<img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250527-164314.png" alt=""></p>
+</li>
+<li>
+<p>选定/确定域名，如tls.practice2025.learncybersecurity.cn与myweb.test</p>
+</li>
+<li>
+<p>以管理员权限编辑C:\Windows\System32\drivers\etc\hosts末尾添加以下两⾏内容后保存: 127.0.0.1   tls.practice2025.learncybersecurity.cn127.0.0.1   myweb.test</p>
+</li>
+<li>
+<p>分别使⽤命令ping tls.practice2025.learncybersecurity.cn和命令ping myweb.test检查主机名或域名的host配置是否成功
+2.4.3.</p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-191436.png" alt=""></p>
+</li>
+</ol>
+<h3>实验准备（三）：Windows虚拟机中修改NGINX主配置⽂件</h3>
+<ol>
+<li>
+<p>编辑NGINX配置⽂件C:\nginx\conf\nginx.conf</p>
+</li>
+<li>
+<p>在http块中添加⼀⾏：server_names_hash_bucket_size 128;，保存⽂件注意：末尾为英⽂号“;”</p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-192424.png" alt=""></p>
+</li>
+<li>
+<p>注意：不可放置在其它块中</p>
+</li>
+<li>
+<p>打开⼀个命令提⽰符窗⼝，⼯作⽬录切换到C:\nginx，保持该窗⼝打开，并完成以下操作：检查NGINX配置⽂件是否语法正确，执⾏nginx -t，如报错则应修正若弹出防⽕墙提⽰，根据需要放⾏，仅本机访问则取消或关闭该对话框</p>
+</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-192600.png" alt=""></p>
+<h3>实验准备（四）：Windows虚拟机中测试准备⼯作是否完成</h3>
+<ol>
+<li>
+<p>双击C:\nginx⽬录下的nginx.exe可执⾏⽂件启动NGINX</p>
+</li>
+<li>
+<p>打开Firefox浏览器，打开两个标签⻚通过地址栏输⼊分别访问以下⽹站：
+http://myweb.test/
+实验内容（⼀）〜（四）将使⽤此域名
+http://tls.practice2025.learncybersecurity.cn/
+实验内容（五）将使⽤此域名</p>
+</li>
+<li>
+<p>按F12或Ctrl+Shift+I打开开发⼈员⼯具：切换到“Network”（⽹络）标签⻚（或直接⽤Ctrl+Shift+E打开）选中“Disable Cache”后刷新⻚⾯，使⽤开发⼈员⼯具查看⽹络通信</p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-193856.png" alt=""></p>
+</li>
+<li>
+<p>换⽤Edge浏览器访问，查看开发⼈员⼯具中的“⽹络”“安全性”⻚</p>
+</li>
+<li>
+<p>在命令提⽰符中于C:\nginx⽬录下执⾏nginx -s stop停⽌NGINX服务器</p>
+</li>
+<li>
+<p>查看NGINX配置⽂件并找到在http块中的所有server块，阅读配置</p>
+</li>
+</ol>
+<h2><strong>五．实验步骤</strong></h2>
+<h3>实验内容（⼀）：Windows虚拟机中使⽤OpenSSL</h3>
+<p>1. 安装好OpenSSL后，使⽤开始菜单中的“Win64 OpenSSL Command Prompt”打开⼀个OpenSSL命令提⽰ 符窗⼝ <img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-191436.png" alt=""></p>
+<p>2. 在该命令提⽰符窗⼝运⾏openssl，查看输出信息 <img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-194341.png" alt=""></p>
+<p>3. 在该命令提⽰符窗⼝运⾏openssl version，查看输出信息 <img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-194407.png" alt=""></p>
+<p>4. 确认OpenSSL可使⽤即可</p>
+<h3>实验内容（⼆）：Windows虚拟机中使⽤OpenSSL⽣成⾃签根CA</h3>
+<p>1. 确保已在C盘下建⽴了C:\cert并做好了准备⼯作</p>
+<p>2. 使⽤开始菜单中的“Win64 OpenSSL Command Prompt”打开⼀个OpenSSL命令提⽰符窗⼝</p>
+<p>3. 在该命令提⽰符窗⼝中进⼊C:\cert为当前⼯作⽬录</p>
+<p>4. 执⾏以下命令⽣成根<strong>CA</strong>密钥（4096位RSA密钥）：</p>
+<pre><code>openssl genrsa 4096 \> ca-key.pem
+</code></pre>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-195229.png" alt=""></p>
+<p>关注命令⾏：</p>
+<p>亦可⽤下列命令配合相应和选项参数⽣成各类密钥：</p>
+<pre><code>openssl genpkey
+</code></pre>
+<p>亦可使⽤指定密码命令⽣成该密码的密钥：</p>
+<p>如可⽤命令openssl ecparam配合相应选项和参数⽣成EC密钥</p>
+<p>5. 执⾏以下命令⽣成根CA的证书申请请求（<strong>CSR</strong>）并⾃签，输⼊所需信息：</p>
+<pre><code>openssl req -new -sha256 -key ca-key.pem -out ca-csr.pem
+</code></pre>
+<p>注意：整个命令为⼀⾏，参数和选项之间⽤空格“_”隔开，下同</p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-195257.png" alt=""></p>
+<pre><code>关注命令⾏选项与参数：
+<p>req：PKCS#10格式的证书请求和证书⽣成命令</p>
+<p>-new：⽣成新的证书申请请求（certificate signing request，CSR）</p>
+<p>-sha256：⽣成CSR时使⽤SHA-256哈希算法</p>
+<p>-key ca-key.pem：从指定⽂件ca-key.pem读取密钥对CSR签名</p>
+<p>-out ca-csr.pem：输出证书申请请求⾄指定⽂件ca-csr.pem
+建议输⼊的信息：</p>
+<p>Country Name (2 letter code) [AU]：CN</p>
+<p>State or Province Name (full name) [Some-State]：Shanxi</p>
+<p>Locality Name (eg, city) []：Taiyuan</p>
+<p>Organization Name (eg, company) [Internet Widgits Pty Ltd]：SXNU</p>
+<p>Organizational Unit Name (eg, section) []：SMCS</p>
+<p>Common Name (e.g. server FQDN or YOUR name) []：Class2307</p>
+<p>Email Address []：<a href="mailto:2307@sxnu.test">2307@sxnu.test</a></p>
+<p>A challenge password []：<em>（空）</em></p>
+</code><p><code>An optional company name []：<em>（空）</em>
+</code></p></pre><p></p>
+<p>6. 使⽤以下命令⽤根CA密钥和证书申请请求⽣成⾃签根<strong>CA</strong>证书：</p>
+<pre><code>openssl x509 -req -sha256 -days 365 -in ca-csr.pem -key ca-key.pem -out ca-cert.pem
+</code></pre>
+<pre><code>关注命令⾏选项与参数：
+<p>x509：证书显⽰和签名命令</p>
+<p>-req：将使⽤已⾃签的CSR（PKCS#10格式）作为输⼊</p>
+<p>-sha256：对证书签名时使⽤SHA-256哈希算法</p>
+<p>-days 365：证书有效期设置为365天</p>
+<p>-in ca-csr.pem：从指定⽂件ca-csr.pem读取CSR（PKCS#10格式，已签名）</p>
+<p>-key ca-key.pem：从指定⽂件ca-key.pem读取密钥以签名证书（旧名-signkey）</p>
+</code><p><code>-out ca-cert.pem：输出证书⾄指定⽂件ca-cert.pem
+</code></p></pre><p></p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-195302.png" alt=""></p>
+<p>7. 执⾏以下命令可查看上⼀步⽣成的⾃签根CA证书的信息：</p>
+<pre><code>openssl x509 -in ca-cert.pem -noout -text
+</code></pre>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-195327.png" alt=""></p>
+<pre><code>关注命令⾏选项与参数：
+<p>x509：证书显⽰和签名命令</p>
+<p>-in：从指定⽂件ca-cert.pem读取证书</p>
+<p>-noout：配合后续选项参数，不输出内容（如原始证书内容）</p>
+</code><p><code>-text：以⽂本⽅式打印证书详细信息
+</code></p></pre><p></p>
+<h3>实验内容（三）：Windows虚机中使⽤OpenSSL由⾃签根CA签发TLS证书</h3>
+<p>1. 仍在“Win64 OpenSSL Command Prompt” 命令提⽰符窗⼝中，仍在⽬录C:\cert中，为当前⼯作⽬录</p>
+<p>2. 执⾏以下命令⽣成<strong>web</strong>服务器<strong>TLS</strong>通信所使⽤的密钥（3072位RSA密钥）：</p>
+<pre><code>openssl genrsa 3072 \> server-key.pem 
+</code></pre>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-195731.png" alt=""></p>
+<p>3. 以下命令⽤服务器密钥⽣成证书申请请求并⾃签，根据提⽰输⼊所需信息：</p>
+<pre><code>openssl req -new -sha256 -key server-key.pem -out server-csr.pem
+</code></pre>
+<pre><code>建议输⼊的信息：
+<p>Country Name (2 letter code) [AU]：CN</p>
+<p>State or Province Name (full name) [Some-State]：Shanxi</p>
+<p>Locality Name (eg, city) []：Taiyuan</p>
+<p>Organization Name (eg, company) [Internet Widgits Pty Ltd]：ZhangSan <em>（你的名字）</em></p>
+<p>Organizational Unit Name (eg, section) []：<em>（可为空）</em></p>
+<p>Common Name (e.g. server FQDN or YOUR name) []：myweb.test <em>（这⾥为前述域名）</em></p>
+<p>Email Address []：<a href="mailto:webmaster@myweb.test">webmaster@myweb.test</a></p>
+<p>6 / 14A challenge password []：<em>（空）</em></p>
+</code><p><code>An optional company name []：<em>（空）</em>
+</code></p></pre><p></p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-200017.png" alt=""></p>
+<p>4. 使⽤以下命令⽤服务器TLS通信密钥和证书申请请求（CSR）⽣成<strong>TLS</strong>证书，并使⽤实验内容（⼆）中⽣</p>
+<p>成的⾃签根<strong>CA</strong>签发：</p>
+<pre><code>openssl x509 -req -in server-csr.pem -CA ca-cert.pem -CAkey ca-key.pem -out server-cert.pem -days 365 -sha256 -extfile x509v3.ext
+</code></pre>
+<pre><code>关注命令⾏选项与参数：
+<p>x509：证书显⽰和签名命令</p>
+<p>-req：将使⽤已⾃签的CSR（PKCS#10格式）作为输⼊</p>
+<p>-CA ca-cert.pem：从指定⽂件ca-cert.pem读取CA证书</p>
+<p>-CAkey ca-key.pem：从指定⽂件ca-key.pem读取CA密钥以签发证书</p>
+<p>-out server-cert.pem：输出证书⾄指定⽂件server-cert.pem</p>
+<p>-extfile x509v3.ext：从指定⽂件x509v3.ext读取数字证书第3版扩展信息</p>
+<p>-sha256：对证书签名时使⽤SHA-256哈希算法</p>
+</code><p><code>-days 365：证书有效期设置为365天
+</code></p></pre><p></p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-200128.png" alt=""></p>
+<p>5. 执⾏以下命令可查看上⼀步由⾃签根CA签发的⼀本服务器TLS证书的信息：</p>
+<pre><code>openssl x509 -in server-cert.pem -noout -text
+</code></pre>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-200205.png" alt=""></p>
+<h3>实验内容（四）：⽤⾃签根CA签发的证书在NGINX部署HTTPS站点并访问</h3>
+<p>1. 如<strong>NGINX</strong>服务器已启动，则于命令提⽰符中在C:\nginx⽬录下执⾏命令<strong>nginx -s stop</strong>停⽌<strong>NGINX</strong>服 <img src="media/image13.png" alt=""></p>
+<p>务器</p>
+<p>2. 编辑NGINX配置⽂件C:\nginx\conf\nginx.conf，找到http块，在其中添加⼀个server块，该⽂件组</p>
+<p>织形式如下：</p>
+<pre><code>...（http块外其它内容）
+<p>http {</p>
+<p>…（http块内其它内容）</p>
+<p>server { &#x26;lt;-添加的块从此⾏开始-&#x26;gt;</p>
+<p>…（server块内内容）</p>
+<p>} &#x26;lt;-添加的块到此⾏结束-&#x26;gt;</p>
+<p>…（http块内其它内容）</p>
+<p>}</p>
+<p>注意：在http块中新添加的server块不要落在其它server块或其它配置块内</p>
+<p>添加的server块完整内容为：</p>
+<p>lecture-note-10-ssl-tls-encryption.md</p>
+<p>2025-05-12</p>
+<p>7 / 14server {</p>
+<p>listen 443 ssl;</p>
+<p>server_name myweb.test;</p>
+<p>ssl_certificate C:\cert\server-cert.pem;</p>
+<p>ssl_certificate_key C:\cert\server-key.pem;</p>
+<p>ssl_session_cache shared:SSL:1m;</p>
+<p>ssl_session_timeout 5m;</p>
+<p>ssl_ciphers HIGH:!aNULL:!MD5;</p>
+<p>ssl_prefer_server_ciphers on;</p>
+<p>location / {</p>
+<p>root html;</p>
+<p>index index.html index.htm;</p>
+<p>}</p>
+</code><p><code>}
+</code></p></pre><p></p>
+<p>3. 保存⽂件后检查配置⽂件语法，在命令提⽰符中于C:\nginx⽬录下执⾏nginx –t，如有错误需更正配</p>
+<p>置错误 <img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-192600.png" alt=""></p>
+<p>4. 确保配置⽆错误后，双击nginx.exe启动NGINX服务器</p>
+<p>5. 在Firefox浏览器中访问：https://myweb.test/</p>
+<p>6. 在<strong>Firefox</strong>浏览器访问该⻚⾯时查看相关安全信息（证书等） <img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-203620.png" alt=""></p>
+<p>注意：如此时“Accept the Risk and Continue”（“接受⻛险并继续”）会如何？<img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-205237.png" alt=""></p>
+<p>7. 在<strong>Firefox</strong>中导⼊⾃签根<strong>CA</strong>证书⾄<strong>“Authorities”</strong>（<strong>“<strong>证书颁发机构</strong>”</strong>）</p>
+<p>如使⽤英⽂版Firefox：</p>
+<p>1. 点击Firefox浏览器中“≡”图标 → Settings → Privacy &#x26; Security</p>
+<p>2. 转到“Certificates”设置部分，点击“View Certificates…”按钮</p>
+<p>3. 切换到“Authorities”⻚⾯，点击“Import…”导⼊实验内容（三）中⽣成的根<strong>CA</strong>证书，注意下</p>
+<p>⼀界⾯选中**“Trust this CA to identify websites.”**</p>
+<p>如使⽤中⽂版Firefox：</p>
+<p>1. 点击Firefox浏览器中“≡”图标 → 设置 → 隐私与安全</p>
+<p>2. 转到“证书”设置部分，点击“查看证书…”按钮</p>
+<p>3. 切换到“证书颁发机构”⻚⾯，点击“导⼊…”导⼊实验内容（三）中⽣成的根<strong>CA</strong>证书，注意下</p>
+<p>⼀界⾯选中**“<strong>信任由此证书颁发机构来标识⽹站</strong>”**选项</p>
+<p>8. 如在前述操作中为该站点添加了例外，则在**“Servers”<strong>（</strong>“<strong>服务器</strong>”**）⻚⾯删除该例外</p>
+<p>9. 重新在Firefox浏览器中访问（或强制刷新）https://myweb.test/，查看安全信息、证书（包含服务器</p>
+<p>证书及签发者的证书）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250514-195425.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250514-185654.png" alt=""></p>
+<p>2.5.5. 实验内容（五）：⽤Let's Encrypt签发的TLS证书配置HTTPS站点并访问</p>
+<p>1. 从分发的zip压缩包中解压其中的cert.pem和key.pem放⼊C:\cert⽬录下 <img alt=""></p>
+<p>如<strong>NGINX</strong>服务器已启动，则命令提⽰符中C:\nginx⽬录下执⾏命令<strong>nginx -s stop</strong>停⽌<strong>NGINX</strong>服务器</p>
+<p>3. 编辑NGINX配置⽂件C:\nginx\conf\nginx.conf，找到http块，在其中添加⼀个新的server块</p>
+<p>注意：在http块中新添加的server块不要落在其它server块或其它配置块内</p>
+<pre><code>添加的server块完整内容为：
+<p>server {</p>
+<p>listen 443 ssl;</p>
+<p>server_name tls.practice2025.learncybersecurity.cn;</p>
+<p>ssl_certificate C:\cert\cert.pem;</p>
+<p>ssl_certificate_key C:\cert\key.pem;</p>
+<p>ssl_session_cache shared:SSL:1m;</p>
+<p>ssl_session_timeout 5m;</p>
+<p>ssl_ciphers HIGH:!aNULL:!MD5;</p>
+<p>ssl_prefer_server_ciphers on;</p>
+<p>location / {</p>
+<p>root html;</p>
+<p>index index.html index.htm;</p>
+<p>}</p>
+</code><p><code>}
+</code></p></pre><p></p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250512-203236.png" alt=""></p>
+<p>4. 保存⽂件，检查配置⽂件语法：nginx –t，如有错误需更正配置错误 <img alt=""></p>
+<p>5. 确保配置⽆错误后，双击nginx.exe启动NGINX服务器</p>
+<p>6. 在Firefox浏览器中访问：https://tls.practice2025.learncybersecurity.cn</p>
+<p>7. 在<strong>Firefox</strong>浏览器访问该⻚⾯时查看相关安全信息（证书等）<img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250514-184359.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/guoelong/pic/QQ20250514-185813.png" alt=""></p>
+<h2>六.  实验小结</h2>
+<h4>一、实验原理总结​​</h4>
+<p>TLS/SSL 核心作用​​</p>
+<p>加密通信​​：通过非对称加密（RSA/ECC）建立安全通道，对称加密（AES）传输数据。</p>
+<p>身份证​​：证书链验证（根 CA → 中间 CA → 服务器证书）确保服务器身份合法。</p>
+<p>数据完整性​​：哈希算法（SHA-256）防止数据篡改。</p>
+<p>自签名证书与 CA 签名证书区别​​</p>
+<p>自签名证书​​：由自身作为根 CA 签发，浏览器默认不信任，需手动导入根 CA 证书。</p>
+<p>CA 签名证书​​：由可信第三方机构（如 Let's Encrypt）签发，浏览器自动信任。</p>
+<p>Hosts 文件作用​​</p>
+<p>本地域名解析，将 myweb.test 映射到本地 IP（如 127.0.0.1），绕过公共 DNS 解析。</p>
+<p>二、实验步骤核心总结​​</p>
+<h5>1. 生成自签根 CA 证书​​</h5>
+<p>密钥生成​​：</p>
+<pre><code>openssl genrsa 4096 \> ca-key.pem *\# 生成根 CA 私钥*
+</code></pre>
+<p>CSR 与自签证书​​：</p>
+<pre><code>openssl req -new -sha256 -key ca-key.pem -out ca-csr.pem *\# 生成 CSR*
+</code><p><code>openssl x509 -req -sha256 -days 365 -in ca-csr.pem -key ca-key.pem -out ca-cert.pem <em># 自签根 CA 证书</em>
+</code></p></pre><p></p>
+<h5>2. 签发服务器 TLS 证书​​</h5>
+<p>服务器密钥与 CSR​​：</p>
+<pre><code>openssl genrsa 3072 \> server-key.pem
+</code></pre>
+<p><em># 生成服务器私钥</em></p>
+<p>openssl req -new -sha256 -key server-key.pem -out server-csr.pem <em># 生成服务器 CSR</em></p>
+<p>使用根 CA 签发证书​​：</p>
+<pre><code>openssl x509 -req -in server-csr.pem -CA ca-cert.pem -CAkey ca-key.pem -out server-cert.pem -days 365 -sha256
+</code></pre>
+<h5>3. Nginx 部署 HTTPS 站点​​</h5>
+<p>Nginx 配置核心片段​​：</p>
+<pre><code>nginx
+<p>server {</p>
+<p>listen 443 ssl;</p>
+<p>server_name myweb.test;</p>
+<p>ssl_certificate C:\cert\server-cert.pem; # 证书路径（Windows 需双反斜杠）</p>
+<p>ssl_certificate_key C:\cert\server-key.pem;</p>
+<p>ssl_session_cache shared:SSL:1m;</p>
+<p>ssl_session_timeout 5m;</p>
+<p>ssl_ciphers HIGH:!aNULL:!MD5;</p>
+<p>ssl_prefer_server_ciphers on;</p>
+<p>location / {</p>
+<p>root html;</p>
+<p>index index.html index.htm;</p>
+<p>}</p>
+</code><p><code>}
+</code></p></pre><p></p>
+<h5>4. 浏览器信任自签根 CA​​</h5>
+<p>Firefox 导入根 CA​​：</p>
+<ol>
+<li>
+<p>设置 → 隐私与安全 → 查看证书 → 证书颁发机构 → 导入 ca-cert.pem。</p>
+</li>
+<li>
+<p>勾选 ​​“信任此 CA 标识网站”​​。</p>
+</li>
+</ol>
+<h5>5. Let's Encrypt 证书对比​​</h5>
+<p>自动化流程​​：通过 ACME 协议自动验证域名所有权并签发证书（无需手动生成 CSR）。</p>
+<p>免费与可信​​：浏览器默认信任 Let's Encrypt，无需手动导入根 CA。</p>
+<h2>七. 遇到问题、其它疑问想法和感悟</h2>
+<p>Nginx 启动失败，浏览器提示“不安全连接”​，证书有效期问题</p>
+<p>自签名证书风险​​</p>
+<p>中间人攻击风险​​：若攻击者控制根 CA 证书，可伪造服务器证书。</p>
+<p>适用场景​​：内网测试、开发环境；生产环境应使用可信 CA 签发证书。</p>
+<p>HTTPS 最佳实践​​</p>
+<p>强制 HTTPS​​：配置 HTTP 到 HTTPS 的重定向。</p>
+<p>启用 HSTS​​：通过响应头 Strict-Transport-Security 强制浏览器使用 HTTPS。</p>
+<p>定期更新密钥​​：防止密钥泄露导致的安全风险。</p>
+<p>Let's Encrypt 优势​​</p>
+<p>零成本​​：免费签发 DV（域名验证）证书。</p>
+<p>自动化工具​​：通过 Certbot 实现证书申请、部署、续期全自动化。</p>
+<p><strong>实验感悟</strong></p>
+<p>技术收获​​</p>
+<p>掌握 OpenSSL 命令行工具生成证书的完整流程。</p>
+<p>理解 TLS 握手过程中证书链验证的核心逻辑。</p>
+<p>安全意识提升​​</p>
+<p>证书透明性​​：实际应用中需监控证书透明度日志（CT Log），防止恶意证书签发。</p>
+<p>最小权限原则​​：服务器私钥文件应限制访问权限（如 chmod 400 server-key.pem）。</p>
+<p>延伸思考​​</p>
+<p>探索自动化工具（如 mkcert）简化本地开发环境 HTTPS 配置。</p>
+<p>研究 ACME 协议实现，理解 Let's Encrypt 的工作机制。</p>
+<h2>八.  思考题回答</h2>
+<p> </p>
+<h3>1. 在互联网基础设施中，SSL/TLS协议常用于哪些场景、协议、技术或产品中?</h3>
+<pre><code>Web安全（HTTPS）​​：保护浏览器与服务器之间的通信（如网银、电商支付）
+<p>电子邮件加密​​：SMTP（STARTTLS）、IMAP/POP3 over TLS</p>
+<p>VPN隧道​​：OpenVPN、IPsec（部分实现依赖TLS）</p>
+<p>API安全​​：RESTful API通过TLS加密数据传输</p>
+<p>物联网（IoT）​​：设备固件更新、远程控制通信</p>
+<p>数据库连接​​：MySQL SSL Mode、PostgreSQL SSL</p>
+</code><p><code>即时通讯​​：WhatsApp、Signal等端到端加密通信的基础协议
+</code></p></pre><p></p>
+<h3>2.  SSL/TLS工作在ISO OSI/RM中的哪一层/哪些层?</h3>
+<pre><code>主要工作层次​​：
+<p>会话层（Session Layer, 第5层）​​：管理加密会话的建立与维护</p>
+<p>应用层（Application Layer, 第7层）​​：作为应用协议（如HTTP）的安全封装层</p>
+</code><p><code>实际实现​​：位于传输层（TCP）之上，为应用层提供透明加密服务
+</code></p></pre><p></p>
+<h3>3.SSL/TLS协议能通过哪些加密技术、加密算法、密码系统为其它协议或技术提供怎样的安全性?这些密码技术属于对称密码系统还是公钥密码系统?</h3>
+<p>| 技术类型 | 算法示例 | 密码系统类型 | 功能说明 |
+|:--:|:--:|:--:|:--:|
+| ​​密钥交换​​ | RSA、Diffie-Hellman、ECDH | 公钥密码系统 | 安全协商会话密钥 |
+| ​​数据加密​​ | AES-256、ChaCha20、3DES | 对称密码系统 | 加密传输内容 |
+| ​​完整性验证​​ | SHA-256、SHA-384 | 哈希算法 | 防止数据篡改 |
+| ​​身份认证​​ | ECDSA、RSA签名 | 公钥密码系统 | 验证服务器/客户端证书合法性 |</p>
+<h4>安全性作用​​</h4>
+<p>保密性​​：通过对称加密防止窃听</p>
+<p>完整性​​：哈希算法确保数据未被篡改</p>
+<p>身份认证​​：数字证书验证通信方身份</p>
+<p>4.SSL协议与TLS协议各版本的安全情况如何?对于SSL/TLS协议各版本的攻击</p>
+<p>有哪些?当前应使用SSL/TLS协议中的哪一版本?</p>
+<p>| 协议版本 |         安全状态          |        已知攻击示例        |
+|:--------:|:-------------------------:|:--------------------------:|
+|  ​​SSLv2​​   | 已废弃（CVE-2011-3389等） | DROWN攻击（利用SSLv2漏洞） |
+|  ​​SSLv3​​   |  已废弃（CVE-2014-3566）  | POODLE攻击（降级到SSLv3）  |
+|  ​​TLS1.0​​  |   高危（CVE-2011-3389）   |  BEAST攻击（CBC模式漏洞）  |
+|  ​​TLS1.1​​  |  已过时（仅限遗留系统）   |    未修复的CBC模式风险     |
+|  ​​TLS1.2​​  |     当前主流安全版本      | 需禁用弱密码套件（如RC4）  |
+|  ​​TLS1.3​​  |  最安全版本（RFC 8446）   |       无已知重大漏洞       |</p>
+<h4>常见协议层攻击​​</h4>
+<p>降级攻击（Downgrade Attack）​​：强制使用低版本协议（如TLS→SSLv3）</p>
+<p>中间人攻击（MITM）​​：伪造证书或利用未验证的CA信任链</p>
+<p>心脏出血（Heartbleed）​​：CVE-2014-0160（OpenSSL实现漏洞）</p>
+<h4>当前推荐版本​​</h4>
+<p>必须启用​​：TLS 1.2和TLS 1.3</p>
+<p>禁用​​：SSLv2、SSLv3、TLS 1.0、TLS 1.1</p>
+<p>5.词汇解释:digital certificate、public-key infrastructure(PKl)5.</p>
+<p>certificate authorities(CA)。</p>
+<h4>Digital Certificate（数字证书）​​</h4>
+<p>定义​​：由CA颁发的电子文档，包含公钥、持有者身份信息、有效期等</p>
+<p>作用​​：验证实体身份（如网站域名），建立信任链</p>
+<p>示例​​：X.509证书用于HTTPS服务器认证</p>
+<h4>Public-Key Infrastructure（PKI，公钥基础设施）​​</h4>
+<p>组成​​：</p>
+<p>证书颁发机构（CA）</p>
+<p>证书注册机构（RA）</p>
+<p>证书吊销列表（CRL）或OCSP服务</p>
+<p>功能​​：管理数字证书的生成、分发、验证和吊销</p>
+<h4>Certificate Authorities（CA，证书颁发机构）​​</h4>
+<p>角色​​：受信任的第三方机构，负责审核申请者身份并签发证书</p>
+<p>分类​​：</p>
+<p>公共CA​​：Let's Encrypt、DigiCert（用于互联网公开服务）</p>
+<p>私有CA​​：企业自建CA（用于内网服务）</p>
+<p>信任机制​​：操作系统和浏览器预置根证书列表</p>
+<h2>九.  拓展操作（可选）</h2>
+<p>实验内容（六）：在实验内容（五）中将浏览器由Firefox换为Edge完成</p>
+<p>2.6.2. 实验内容（七）：在Debian虚拟机中安装OpenSSL等软件完成前述操作</p>
+<p>提⽰：</p>
+<p>1. Debian中可安装OpenSSL、NGINX、CURL等软件</p>
+<p>2. OpenSSL跨平台命令⾏操作基本⼀致</p>
+<p>3. NGINX配置可查阅官⽅⽂档、教程或借助AI</p>
+<p>4. 浏览器访问⽹站可藉由CURL实现</p>
+<p>5. 使⽤CURL可通过选项--cacert并提供CA证书路径作为参数在访问中信任CA签发的证书：</p>
+<p>curl --cacert ca-cert.pem https://...</p>
+<p>实验内容（⼋）：学习OpenSSL多种⽤途</p>
+<p>实验内容（九）：尝试使⽤免费证书颁发机构提供的服务获取⼀本可⽤于真实⽹站的证书</p>  <div class="comments-container" data-astro-cid-jvxsf75u> <h3 class="comments-title" data-astro-cid-jvxsf75u>评论</h3> <div id="utterances-comments" data-astro-cid-jvxsf75u></div> <script type="module">(function(){const n=()=>typeof window<"u"&&document.documentElement.classList.contains("dark")?"github-dark":"github-light",r=s=>{const t=document.createElement("script");t.src="https://utteranc.es/client.js",t.async=!0,t.crossOrigin="anonymous",t.setAttribute("repo","dimbc/blog"),t.setAttribute("issue-term","pathname"),t.setAttribute("theme",s);const e=document.getElementById("utterances-comments");e.innerHTML="",e.appendChild(t)};r(n()),typeof window<"u"&&new MutationObserver(t=>{t.forEach(e=>{e.attributeName==="class"&&r(n())})}).observe(document.documentElement,{attributes:!0})})();</script> </div> </div> </article> </main> <footer data-astro-cid-sz7xmlte> <div class="footer-content" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>&copy; 2026 Your name here. All rights reserved.</p> <p class="footer-links" data-astro-cid-sz7xmlte> <a href="/blog/" data-astro-cid-sz7xmlte>Home</a> <a href="/blog/blog" data-astro-cid-sz7xmlte>Blog</a> <a href="/blog/about" data-astro-cid-sz7xmlte>About</a> </p> </div> </footer> </body></html>
